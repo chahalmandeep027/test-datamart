@@ -10,6 +10,14 @@ import com.pg.utils.utility as ut
 
 if __name__ == "__main__":
 
+    # Create the SparkSession
+    spark = SparkSession \
+        .builder \
+        .appName("Read ingestion enterprise applications") \
+        .config("spark.mongodb.input.uri", app_secret["mongodb_config"]["uri"])\
+        .getOrCreate()
+    spark.sparkContext.setLogLevel('ERROR')
+
     current_dir = os.path.abspath(os.path.dirname(__file__))
     app_config_path = os.path.abspath(
         current_dir + "/../../" + "application.yml")
@@ -26,14 +34,6 @@ if __name__ == "__main__":
     hadoop_conf.set("fs.s3a.access.key", app_secret["s3_conf"]["access_key"])
     hadoop_conf.set("fs.s3a.secret.key",
                     app_secret["s3_conf"]["secret_access_key"])
-
-    # Create the SparkSession
-    spark = SparkSession \
-        .builder \
-        .appName("Read ingestion enterprise applications") \
-        .config("spark.mongodb.input.uri", app_secret["mongodb_config"]["uri"])\
-        .getOrCreate()
-    spark.sparkContext.setLogLevel('ERROR')
 
     src_list = app_conf["source_list"]
 
