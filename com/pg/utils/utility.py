@@ -27,7 +27,7 @@ def read_from_mysql(spark, app_secret, app_conf):
 # write a function that takes all incessary info, read data from sftp and return a dataframe
 
 
-def read_from_sftp(spark, app_conf, app_secret, pem_file_path):
+def read_from_sftp(spark, app_secret, app_conf, pem_file_path):
     df = spark.read\
         .format("com.springml.spark.sftp")\
         .option("host", app_secret["sftp_conf"]["hostname"])\
