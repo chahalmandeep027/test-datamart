@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
         elif src == "ADDR":
             cust_addr_df = ut.read_from_mongodb(
-                spark, src_conf) \
+                spark, app_secret, src_conf) \
                 .withColumn("ins_dt", current_date())
 
             cust_addr_df.show(5, False)

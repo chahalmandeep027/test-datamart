@@ -43,9 +43,10 @@ def read_from_sftp(spark, app_secret, app_conf, pem_file_path):
 # write a function that takes all incessary info, read data from mongodb and return a dataframe
 
 
-def read_from_mongodb(spark, app_conf):
+def read_from_mongodb(spark, app_secret, app_conf):
     df = spark.read\
         .format("com.mongodb.spark.sql.DefaultSource")\
+        .option("uri", app_secret["mongodb_config"]["uri"])\
         .option("database", app_conf["mongodb_config"]["database"])\
         .option("collection", app_conf["mongodb_config"]["collection"])\
         .load()
