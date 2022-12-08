@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
         elif src == "CP":
             cp_df = ut.read_from_s3(
-                spark, src_conf, "KC_Extract_1_20171009.csv") \
+                spark, src_conf) \
                 .withColumn("ins_dt", current_date())
 
             cp_df.show(5, False)
@@ -82,6 +82,6 @@ if __name__ == "__main__":
                 .parquet(
                     "s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/" + src)
 
-# spark-submit --packages "mysql:mysql-connector-java:8.0.15" com/pg/source_data_loading.py
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4,mysql:mysql-connector-java:8.0.15,com.springml:spark-sftp_2.11:1.1.1,org.mongodb.spark:mongo-spark-connector_2.11:2.4.1" com/pg/source_data_loading.py
 # spark-submit --packages "com.springml:spark-sftp_2.11:1.1.1" dataframe/ingestion/others/systems/sftp_df.py
 # spark-submit --packages "org.mongodb.spark:mongo-spark-connector_2.11:2.4.1" dataframe/ingestion/others/systems/mongo_df.py
