@@ -1,0 +1,38 @@
+source_list:
+  - SB
+  # - OL
+  # - CP
+  # - ADDR
+
+SB:
+  mysql_conf:
+    dbtable: testdb.TRANSACTIONSYNC
+    partition_column: App_Transaction_Id
+    query : "(select * from testdb.TRANSACTIONSYNC where Internal_Member_Id = 'PC7135361') as t"
+
+OL:
+  sftp_conf:
+    filetype: csv
+    delimiter: |
+    directory: /home/ubuntu/data
+  filename: receipts_delta_GBR_14_10_2017.csv
+
+CP:
+  s3_conf:
+    s3_bucket: mandeep-poc-bucket/emrcluster-dataframeexample-data/    
+  filename: KC_Extract_1_20171009.csv
+
+ADDR:
+  mongodb_config:
+    database: customer
+    collection: address
+
+s3_conf:
+  s3_bucket: mandeep-poc-bucket/emrcluster-dataframeexample-data/
+  staging_dir: pg_staging
+
+redshift_conf:
+  filetype: csv
+  delimiter: |
+  dbtable: PUBLIC.TXN_FCT
+  query: SELECT txn_id, create_time, amount, cust_id from PUBLIC.TXN_FCT
