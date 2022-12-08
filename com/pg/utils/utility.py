@@ -3,7 +3,7 @@ import os.path
 # write a function that takes all incessary info, read data from mysql and return a dataframe
 
 
-def read_from_mysql(spark, app_conf, app_secret):
+def read_from_mysql(spark, app_secret, app_conf):
     print('\nReading data from MySQL DB,')
 
     jdbc_params = {"url": get_mysql_jdbc_url(app_secret),
