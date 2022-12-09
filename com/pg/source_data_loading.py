@@ -39,6 +39,7 @@ if __name__ == "__main__":
     for src in src_list:
         src_conf = app_conf[src]
         if src == 'SB':
+            print("Reading SB data from mysql")
             txnDF = ut.read_from_mysql(spark, app_secret, src_conf) \
                 .withColumn('ins_dt', current_date())
 
@@ -49,7 +50,10 @@ if __name__ == "__main__":
                 .partitionBy("ins_dt") \
                 .parquet("s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/"+src)
 
+            print("Writing SB data to s3 staging dir complete")
+
         elif src == "OL":
+            print("Reading OL data from sftp")
             ol_txn_df = ut.read_from_sftp(spark, app_secret, src_conf,
                                           os.path.abspath(
                                               current_dir + "/../../" + app_secret["sftp_conf"]["pem"])) \
@@ -62,7 +66,10 @@ if __name__ == "__main__":
                 .partitionBy("ins_dt") \
                 .parquet("s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/" + src)
 
+            print("Writing OL data to s3 staging dir complete")
+
         elif src == "CP":
+            print("Reading CP data from s3")
             cp_df = ut.read_from_s3(
                 spark, src_conf) \
                 .withColumn("ins_dt", current_date())
@@ -74,7 +81,10 @@ if __name__ == "__main__":
                 .partitionBy("ins_dt").parquet(
                     "s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/" + src)
 
+            print("Writing CP data to s3 staging dir complete")
+
         elif src == "ADDR":
+            print("Reading ADDR data from mongoDB")
             cust_addr_df = ut.read_from_mongodb(
                 spark, app_secret, src_conf) \
                 .withColumn("ins_dt", current_date())
@@ -99,6 +109,6 @@ if __name__ == "__main__":
                 .parquet(
                     "s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/" + src)
 
+            print("Writing ADDR data to s3 staging dir complete")
+
 # spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4,mysql:mysql-connector-java:8.0.15,com.springml:spark-sftp_2.11:1.1.1,org.mongodb.spark:mongo-spark-connector_2.11:2.4.1" com/pg/source_data_loading.py
-# spark-submit --packages "com.springml:spark-sftp_2.11:1.1.1" dataframe/ingestion/others/systems/sftp_df.py
-# spark-submit --packages "org.mongodb.spark:mongo-spark-connector_2.11:2.4.1" dataframe/ingestion/others/systems/mongo_df.py
