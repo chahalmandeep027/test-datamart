@@ -78,6 +78,17 @@ if __name__ == "__main__":
             cust_addr_df.printSchema()
             cust_addr_df.show(5, False)
 
+            cust_addr_df = cust_addr_df \
+                .select(col("consumer_id"),
+                        col("mobile-no"),
+                        col("address.state").alias("state"),
+                        col("address.city").alias("city"),
+                        col("address.street").alias("street"),
+                        "ins_dt")
+            print("dataframe after data curation")
+            cust_addr_df.printSchema()
+            cust_addr_df.show(5, False)
+
             cust_addr_df.write \
                 .partitionBy("ins_dt") \
                 .parquet(
