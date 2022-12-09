@@ -45,6 +45,7 @@ if __name__ == "__main__":
             txnDF.show(5, False)
 
             txnDF.write \
+                .mode("overwrite") \
                 .partitionBy("ins_dt") \
                 .parquet("s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/"+src)
 
@@ -56,7 +57,9 @@ if __name__ == "__main__":
 
             ol_txn_df.show(5, False)
 
-            ol_txn_df.write.partitionBy("ins_dt") \
+            ol_txn_df.write \
+                .mode("overwrite") \
+                .partitionBy("ins_dt") \
                 .parquet("s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/" + src)
 
         elif src == "CP":
@@ -67,6 +70,7 @@ if __name__ == "__main__":
             cp_df.show(5, False)
 
             cp_df.write \
+                .mode("overwrite") \
                 .partitionBy("ins_dt").parquet(
                     "s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/" + src)
 
@@ -90,6 +94,7 @@ if __name__ == "__main__":
             cust_addr_df.show(5, False)
 
             cust_addr_df.write \
+                .mode("overwrite") \
                 .partitionBy("ins_dt") \
                 .parquet(
                     "s3a://" + app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/" + src)
