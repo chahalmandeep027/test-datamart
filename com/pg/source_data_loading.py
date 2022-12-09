@@ -75,6 +75,7 @@ if __name__ == "__main__":
                 spark, app_secret, src_conf) \
                 .withColumn("ins_dt", current_date())
 
+            cust_addr_df.printSchema()
             cust_addr_df.show(5, False)
 
             cust_addr_df.write \
