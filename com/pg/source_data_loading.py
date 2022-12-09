@@ -89,8 +89,8 @@ if __name__ == "__main__":
                 spark, app_secret, src_conf) \
                 .withColumn("ins_dt", current_date())
 
-            cust_addr_df.printSchema()
-            cust_addr_df.show(5, False)
+            # cust_addr_df.printSchema()
+            # cust_addr_df.show(5, False)
 
             cust_addr_df = cust_addr_df \
                 .select(col("consumer_id"),
@@ -99,7 +99,7 @@ if __name__ == "__main__":
                         col("address.city").alias("city"),
                         col("address.street").alias("street"),
                         "ins_dt")
-            print("dataframe after data curation")
+            # print("dataframe after data curation")
             cust_addr_df.printSchema()
             cust_addr_df.show(5, False)
 
