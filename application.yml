@@ -47,7 +47,7 @@ REGIS_DIM:
     b.STATE, b.CITY, b.STREET, a.INS_DT
     FROM CP a join ADDR b
     on a.REGIS_CNSM_ID=b.consumer_id
-    WHERE INS_DT = CURRENT_DATE
+    WHERE a.INS_DT = CURRENT_DATE and b.INS_DT = CURRENT_DATE
     ) CP2
     
 CHILD_DIM:
