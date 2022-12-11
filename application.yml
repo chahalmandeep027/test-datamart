@@ -32,7 +32,7 @@ target_list:
   - CHILD_DIM
 
 REGIS_DIM:
-  tableName: DATAMART.REGIS_DIM
+  tableName: REGIS_DIM
   sourceData:
     - CP
     - ADDR
