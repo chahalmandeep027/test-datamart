@@ -28,8 +28,8 @@ ADDR:
     collection: address
 
 target_list:
-  - REGIS_DIM
-  # - CHILD_DIM
+  # - REGIS_DIM
+  - CHILD_DIM
 
 REGIS_DIM:
   tableName: REGIS_DIM
