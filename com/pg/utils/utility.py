@@ -65,6 +65,12 @@ def read_from_s3(spark, app_conf):
 
     return df
 
+
+def read_from_s3_staging(spark, file_path):
+    src_df = spark.sql(
+        "select * from parquet.`{}`".format(file_path))
+    return src_df
+
 # write dataframe to Redshift
 
 

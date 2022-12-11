@@ -44,27 +44,43 @@ if __name__ == "__main__":
 
     for tgt in tgt_list:
         tgt_conf = app_conf[tgt]
-        if tgt == 'REGIS_DIM':
-            src_list = tgt_conf['sourceData']
-            for src in src_list:
-                file_path = "s3a://" + \
-                    app_conf["s3_conf"]["s3_bucket"] + \
-                    app_conf["s3_conf"]["staging_dir"]+"/"+src
-                src_df = spark.sql(
-                    "select * from parquet.`{}`".format(file_path))
-                src_df.printSchema()
-                src_df.show(5, False)
-                src_df.createOrReplaceTempView(src)
-            print('REGIS_DIM')
+        print(tgt)
+        src_list = tgt_conf['sourceData']
+        for src in src_list:
+            file_path = "s3a://" + \
+                app_conf["s3_conf"]["s3_bucket"] + \
+                app_conf["s3_conf"]["staging_dir"]+"/"+src
+            src_df = ut.read_from_s3_staging(spark, file_path)
+            src_df.printSchema()
+            src_df.show(5, False)
+            src_df.createOrReplaceTempView(src)
 
-            regis_dim = spark.sql(app_conf['REGIS_DIM']["loadingQuery"])
-            regis_dim.show(5)
+        regis_dim = spark.sql(app_conf[tgt]["loadingQuery"])
+        regis_dim.show(5)
 
-            ut.write_to_redshift(regis_dim, app_secret, "s3a://" +
-                                 app_conf["s3_conf"]["s3_bucket"] + "temp", tgt_conf['tableName'])
+        ut.write_to_redshift(regis_dim, app_secret, "s3a://" +
+                             app_conf["s3_conf"]["s3_bucket"] + "temp", tgt_conf['tableName'])
 
-        elif tgt == 'CHILD_DIM':
-            print('CHILD_DIM')
+        # if tgt == 'REGIS_DIM':
+        #     print('REGIS_DIM')
+        #     src_list = tgt_conf['sourceData']
+        #     for src in src_list:
+        #         file_path = "s3a://" + \
+        #             app_conf["s3_conf"]["s3_bucket"] + \
+        #             app_conf["s3_conf"]["staging_dir"]+"/"+src
+        #         src_df = ut.read_from_s3_staging(spark, file_path)
+        #         src_df.printSchema()
+        #         src_df.show(5, False)
+        #         src_df.createOrReplaceTempView(src)
+
+        #     regis_dim = spark.sql(app_conf[tgt]["loadingQuery"])
+        #     regis_dim.show(5)
+
+        #     ut.write_to_redshift(regis_dim, app_secret, "s3a://" +
+        #                          app_conf["s3_conf"]["s3_bucket"] + "temp", tgt_conf['tableName'])
+
+        # elif tgt == 'CHILD_DIM':
+        #     print('CHILD_DIM')
 
 
 # create temporary view on top on that
