@@ -55,10 +55,10 @@ if __name__ == "__main__":
             src_df.show(5, False)
             src_df.createOrReplaceTempView(src)
 
-        regis_dim = spark.sql(app_conf[tgt]["loadingQuery"])
-        regis_dim.show(5)
+        dim_df = spark.sql(app_conf[tgt]["loadingQuery"])
+        dim_df.show(5)
 
-        ut.write_to_redshift(regis_dim, app_secret, "s3a://" +
+        ut.write_to_redshift(dim_df, app_secret, "s3a://" +
                              app_conf["s3_conf"]["s3_bucket"] + "temp", tgt_conf['tableName'])
 
         # if tgt == 'REGIS_DIM':
