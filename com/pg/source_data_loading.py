@@ -39,7 +39,7 @@ if __name__ == "__main__":
     for src in src_list:
         src_conf = app_conf[src]
         if src == 'SB':
-            print("Reading SB data from mysql")
+            print("Reading SB data from mysql")  # Global B2B transaction data
             txnDF = ut.read_from_mysql(spark, app_secret, src_conf) \
                 .withColumn('ins_dt', current_date())
 

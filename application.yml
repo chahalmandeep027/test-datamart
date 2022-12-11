@@ -27,9 +27,13 @@ ADDR:
     database: customer
     collection: address
 
+target_list:
+  - REGIS_DIM
+  - CHILD_DIM
+
 REGIS_DIM:
   tableName: DATAMART.REGIS_DIM
-  sourceTable:
+  sourceData:
     - CP
     - ADDR
   loadingQuery: >
@@ -38,11 +42,28 @@ REGIS_DIM:
     REGIS_ID, REGIS_DATE, REGIS_LTY_ID AS LTY_ID, REGIS_CHANNEL, REGIS_GENDER, REGIS_CITY, INS_DT
     FROM 
     (SELECT 
-    DISTINCT REGIS_CNSM_ID, CAST(REGIS_CTY_CODE AS SMALLINT), CAST(REGIS_ID as INTEGER), REGIS_LTY_ID, REGIS_DATE, REGIS_CHANNEL, REGIS_GENDER, REGIS_CITY, INS_TS
-    FROM CP
+    DISTINCT a.REGIS_CNSM_ID, CAST(a.REGIS_CTY_CODE AS SMALLINT), CAST(a.REGIS_ID as INTEGER), 
+    a.REGIS_LTY_ID, a.REGIS_DATE, a.REGIS_CHANNEL, a.REGIS_GENDER, a.REGIS_CITY, 
+    b.STATE, b.CITY, b.STREET, a.INS_DT
+    FROM CP a join ADDR b
+    on a.REGIS_CNSM_ID=b.consumer_id
     WHERE INS_DT = CURRENT_DATE
     ) CP2
     
+CHILD_DIM:
+  tableName: DATAMART.CHILD_DIM
+  sourceData:
+    - CP
+  loadingQuery: >
+    SELECT FN_UUID() CHILD_KEY, REGIS_CNSM_ID, REGIS_CTY_CODE, CHILD_ID, CHILD_NB, CHILD_GENDER, current_Timestamp
+    FROM (SELECT DISTINCT REGIS_CNSM_ID, REGIS_CTY_CODE, CHILD_ID, CHILD_NB, CHILD_GENDER, current_Timestamp
+    FROM CP
+    WHERE CAST(INS_TS AS DATE) = CURRENT_DATE
+    AND CHILD_ID IS NOT NULL
+    ) CP
+    
+
+
 s3_conf:
   s3_bucket: mandeep-poc-bucket/emrcluster-dataframeexample-data/
   staging_dir: pg_staging
@@ -50,5 +71,5 @@ s3_conf:
 redshift_conf:
   filetype: csv
   delimiter: |
-  dbtable: PUBLIC.TXN_FCT
-  query: SELECT txn_id, create_time, amount, cust_id from PUBLIC.TXN_FCT
+  dbtable: DATAMART.REGIS_DIM
+  #query: SELECT txn_id, create_time, amount, cust_id from PUBLIC.TXN_FCT

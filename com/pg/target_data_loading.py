@@ -3,6 +3,7 @@ from pyspark.sql.functions import *
 import yaml
 import os.path
 import com.pg.utils.utility as ut
+import uuid
 
 if __name__ == "__main__":
 
@@ -30,12 +31,40 @@ if __name__ == "__main__":
     hadoop_conf.set("fs.s3a.secret.key",
                     app_secret["s3_conf"]["secret_access_key"])
 
+    def fn_uuid():
+        uid = uuid.uuid1()
+        return str(uid)
+
+    FN_UUID_UDF = spark.udf \
+        .register("FN_UUID", fn_uuid, StringType())
+
 # Read CP and Addr data for current date
-    cp_df = spark.sql("select * from parquet.`{}`".format("s3a://" +
-                                                          app_conf["s3_conf"]["s3_bucket"]+app_conf["s3_conf"]["staging_dir"]+"/"+"CP"))
-    cp_df.printSchema()
-    cp_df.show(5, False)
-    cp_df.createOrReplaceTempView("CP")
+    tgt_list = app_conf["target_list"]
+
+    for tgt in tgt_list:
+        tgt_conf = app_conf[tgt]
+        if tgt == 'REGIS_DIM':
+            src_list = tgt_conf['sourceData']
+            for src in src_list:
+                file_path = "s3a://" + \
+                    app_conf["s3_conf"]["s3_bucket"] + \
+                    app_conf["s3_conf"]["staging_dir"]+"/"+src
+                src_df = spark.sql(
+                    "select * from parquet.`{}`".format(file_path))
+                src_df.printSchema()
+                src_df.show(5, False)
+                src_df.createOrReplaceTempView(src)
+            print('REGIS_DIM')
+
+            regis_dim = spark.sql(app_conf['REGIS_DIM']["loadingQuery"])
+            regis_dim.show(5)
+
+            ut.write_to_redshift(regis_dim, app_secret, "s3a://" +
+                                 app_conf["s3_conf"]["s3_bucket"] + "temp", tgt_conf['tableName'])
+
+        elif tgt == 'CHILD_DIM':
+            print('CHILD_DIM')
+
 
 # create temporary view on top on that
 # execute a spark sql query to get dim table data
@@ -55,3 +84,4 @@ if __name__ == "__main__":
     # txn_df.show(5, False)
 
 # spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4,mysql:mysql-connector-java:8.0.15,com.springml:spark-sftp_2.11:1.1.1,org.mongodb.spark:mongo-spark-connector_2.11:2.4.1" com/pg/target_data_loading.py
+# spark-submit --jars "https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/1.2.36.1060/RedshiftJDBC42-no-awssdk-1.2.36.1060.jar" --packages "io.github.spark-redshift-community:spark-redshift_2.11:4.0.1,org.apache.spark:spark-avro_2.11:2.4.2,org.apache.hadoop:hadoop-aws:2.7.4" com/pg/target_data_loading.py
