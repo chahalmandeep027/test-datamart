@@ -4,6 +4,7 @@ import yaml
 import os.path
 import com.pg.utils.utility as ut
 import uuid
+from pyspark.sql.types import StringType
 
 if __name__ == "__main__":
 
