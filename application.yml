@@ -51,7 +51,7 @@ REGIS_DIM:
     ) CP2
     
 CHILD_DIM:
-  tableName: DATAMART.CHILD_DIM
+  tableName: CHILD_DIM
   sourceData:
     - CP
   loadingQuery: >
