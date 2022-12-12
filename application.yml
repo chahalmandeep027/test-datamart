@@ -63,7 +63,7 @@ CHILD_DIM:
     AND CHILD_ID IS NOT NULL
     ) CP
     
-RTL_TXN_FACT:
+RTL_TXN_FCT:
   tableName: RTL_TXN_FCT
   sourceTable:
     - REGIS_DIM
