@@ -55,6 +55,14 @@ if __name__ == "__main__":
             src_df.show(5, False)
             src_df.createOrReplaceTempView(src)
 
+        src_tb_list = tgt_conf['sourceTable']
+        for src_tb in src_tb_list:
+            src_df = ut.read_from_redshift(
+                spark, app_secret, tgt_conf, "select * from " + src_tb)
+            src_df.printSchema()
+            src_df.show(5, False)
+            src_df.createOrReplaceTempView(src)
+
         dim_df = spark.sql(app_conf[tgt]["loadingQuery"])
         dim_df.show(5)
 
