@@ -61,44 +61,7 @@ if __name__ == "__main__":
         ut.write_to_redshift(dim_df, app_secret, "s3a://" +
                              app_conf["s3_conf"]["s3_bucket"] + "temp", tgt_conf['tableName'])
 
-        # if tgt == 'REGIS_DIM':
-        #     print('REGIS_DIM')
-        #     src_list = tgt_conf['sourceData']
-        #     for src in src_list:
-        #         file_path = "s3a://" + \
-        #             app_conf["s3_conf"]["s3_bucket"] + \
-        #             app_conf["s3_conf"]["staging_dir"]+"/"+src
-        #         src_df = ut.read_from_s3_staging(spark, file_path)
-        #         src_df.printSchema()
-        #         src_df.show(5, False)
-        #         src_df.createOrReplaceTempView(src)
-
-        #     regis_dim = spark.sql(app_conf[tgt]["loadingQuery"])
-        #     regis_dim.show(5)
-
-        #     ut.write_to_redshift(regis_dim, app_secret, "s3a://" +
-        #                          app_conf["s3_conf"]["s3_bucket"] + "temp", tgt_conf['tableName'])
-
-        # elif tgt == 'CHILD_DIM':
-        #     print('CHILD_DIM')
-
-
-# create temporary view on top on that
-# execute a spark sql query to get dim table data
-
-    # print("Reading txn_fact table ingestion AWS Redshift and creating Dataframe,")
-
-    # jdbc_url = ut.get_redshift_jdbc_url(app_secret)
-    # print(jdbc_url)
-    # txn_df = spark.read\
-    #     .format("io.github.spark_redshift_community.spark.redshift")\
-    #     .option("url", jdbc_url) \
-    #     .option("query", app_conf["redshift_conf"]["query"]) \
-    #     .option("forward_spark_s3_credentials", "true")\
-    #     .option("tempdir", "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/temp")\
-    #     .load()
-
-    # txn_df.show(5, False)
+        print(f'Writing {tgt} to redshift completed!')
 
 # spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4,mysql:mysql-connector-java:8.0.15,com.springml:spark-sftp_2.11:1.1.1,org.mongodb.spark:mongo-spark-connector_2.11:2.4.1" com/pg/target_data_loading.py
 # spark-submit --jars "https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/1.2.36.1060/RedshiftJDBC42-no-awssdk-1.2.36.1060.jar" --packages "io.github.spark-redshift-community:spark-redshift_2.11:4.0.1,org.apache.spark:spark-avro_2.11:2.4.2,org.apache.hadoop:hadoop-aws:2.7.4" com/pg/target_data_loading.py
