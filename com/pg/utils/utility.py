@@ -74,7 +74,7 @@ def read_from_s3_staging(spark, file_path):
 # write dataframe to Redshift
 
 
-def read_from_redshift(spark, app_secret, app_conf, query):
+def read_from_redshift(spark, app_secret, temp_dir, query):
     jdbc_url = get_redshift_jdbc_url(app_secret)
     print(jdbc_url)
     df = spark.read\
@@ -82,17 +82,17 @@ def read_from_redshift(spark, app_secret, app_conf, query):
         .option("url", jdbc_url) \
         .option("query", query) \
         .option("forward_spark_s3_credentials", "true")\
-        .option("tempdir", "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "temp")\
+        .option("tempdir", temp_dir)\
         .load()
     return df
 
 
 # def write_to_redshift(df, app_secret, s3_dir, table_name):
-def write_to_redshift(df, app_secret, table_name):
+def write_to_redshift(df, app_secret, temp_dir, table_name):
     df.coalesce(1).write\
         .format("io.github.spark_redshift_community.spark.redshift") \
         .option('url', get_redshift_jdbc_url(app_secret))\
-        .option("tempdir", 's3a://mandeep-poc-bucket/emrcluster-dataframeexample-data/temp') \
+        .option("tempdir", temp_dir) \
         .option("forward_spark_s3_credentials", "true") \
         .option("dbtable", table_name) \
         .mode("overwrite")\

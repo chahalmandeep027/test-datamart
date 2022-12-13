@@ -46,6 +46,7 @@ if __name__ == "__main__":
         tgt_conf = app_conf[tgt]
         print(tgt)
         src_list = tgt_conf['sourceData']
+        temp_dir = "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "temp"
         for src in src_list:
             file_path = "s3a://" + \
                 app_conf["s3_conf"]["s3_bucket"] + \
@@ -58,19 +59,20 @@ if __name__ == "__main__":
         src_tb_list = tgt_conf['sourceTable']
         for src_tb in src_tb_list:
             src_df = ut.read_from_redshift(
-                spark, app_secret, tgt_conf, "select * from " + src_tb)
+                spark, app_secret, temp_dir, "select * from " + src_tb)
             src_df.printSchema()
             src_df.show(5, False)
             src_df.createOrReplaceTempView(src)
 
         dim_df = spark.sql(app_conf[tgt]["loadingQuery"])
         dim_df.show(5)
-        # temp_dir = "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "temp"
+        #
         # print(temp_dir)
         # ut.write_to_redshift(dim_df, app_secret, temp_dir,
         #  tgt_conf['tableName'])
 
-        ut.write_to_redshift(dim_df, app_secret, tgt_conf['tableName'])
+        ut.write_to_redshift(dim_df, app_secret, temp_dir,
+                             tgt_conf['tableName'])
 
         print(f'Writing {tgt} to redshift completed!')
 
