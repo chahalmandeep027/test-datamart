@@ -62,7 +62,7 @@ if __name__ == "__main__":
                 spark, app_secret, temp_dir, "select * from " + src_tb)
             src_df.printSchema()
             src_df.show(5, False)
-            src_df.createOrReplaceTempView(src)
+            src_df.createOrReplaceTempView(src_tb)
 
         dim_df = spark.sql(app_conf[tgt]["loadingQuery"])
         dim_df.show(5)
