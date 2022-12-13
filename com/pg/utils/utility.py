@@ -87,11 +87,12 @@ def read_from_redshift(spark, app_secret, app_conf, query):
     return df
 
 
-def write_to_redshift(df, app_secret, s3_dir, table_name):
+# def write_to_redshift(df, app_secret, s3_dir, table_name):
+def write_to_redshift(df, app_secret, table_name):
     df.coalesce(1).write\
         .format("io.github.spark_redshift_community.spark.redshift") \
         .option('url', get_redshift_jdbc_url(app_secret))\
-        .option("tempdir", s3_dir) \
+        .option("tempdir", 's3a://mandeep-poc-bucket/emrcluster-dataframeexample-data/temp') \
         .option("forward_spark_s3_credentials", "true") \
         .option("dbtable", table_name) \
         .mode("overwrite")\

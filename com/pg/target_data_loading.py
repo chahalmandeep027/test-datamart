@@ -65,10 +65,12 @@ if __name__ == "__main__":
 
         dim_df = spark.sql(app_conf[tgt]["loadingQuery"])
         dim_df.show(5)
-        temp_dir = "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "temp"
-        print(temp_dir)
-        ut.write_to_redshift(dim_df, app_secret, temp_dir,
-                             tgt_conf['tableName'])
+        # temp_dir = "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "temp"
+        # print(temp_dir)
+        # ut.write_to_redshift(dim_df, app_secret, temp_dir,
+        #  tgt_conf['tableName'])
+
+        ut.write_to_redshift(dim_df, app_secret, tgt_conf['tableName'])
 
         print(f'Writing {tgt} to redshift completed!')
 
